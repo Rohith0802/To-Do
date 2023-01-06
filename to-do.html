@@ -1,0 +1,109 @@
+<html lang="en">
+<head>
+    <title>To-Do</title>
+    <link rel="stylesheet" href="to-do.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="to-do.js" defer></script>
+</head>
+<body>
+    <div class="top-nav">
+       <div class="side-nav">
+        <i class="fa fa-th"></i>
+       </div>
+       <div class="to-do">
+        <a href="">To Do</a>
+       </div>
+       <div class="search-bar">
+            <div class="search-box">
+                <button class="search-button"><i class="fa fa-search"></i></button><input id="search" type="search" class="search" onfocus="this.placeholder='search'"  onblur="this.placeholder=''">
+            </div>
+       </div>
+       <div class="setting">
+        <i class="fa fa-gear"></i>
+       </div>
+       <div class="help">
+        <i class="fa fa-question"></i>
+       </div>
+       <div class="whats-new">
+        <i class="fa fa-bullhorn"></i>
+       </div>
+       <div class="user">
+        <i class="fa fa-user-circle"></i>
+       </div>
+    </div>
+
+    <div class="whole-container">
+        <div id="left-container" class="left-container">
+            <div class="side-bar-head">
+                <button id="side-bar-button" class="side-bar-button">
+                    <i class="fa fa-navicon"></i>
+                </button>
+            </div>
+            <div class="total-list">
+                <div id="content-list" class="content-list">
+                </div>
+                <div class="new-list">
+                    <div class="plus-icon"><i class="fa fa-plus"></i></div>
+                    <input id="new-list" type="text" placeholder="New list">
+                </div><div class="create-group">
+                    <button class="create-group-button"><i class="fa fa-plus-square-o"></i></button>
+                </div>
+            </div>
+            <div class="side-bar-footer">
+                <div class="side-bar-footer-icon"><i class="fa fa-envelope-o"></i></div><div class="side-bar-footer-icon"><i class="fa fa-calendar-o"></i></div><div class="side-bar-footer-icon"><i class="fa fa-users"></i></div><div class="side-bar-footer-icon"><i class="fa fa-paperclip"></i></div><div class="side-bar-footer-icon"><i class="fa fa-check"></i></div>
+            </div>
+        </div><div id="middle-container" class="middle-container">
+            <div class="middle-container-header">
+                <div class="middle-container-sub-header">
+                    <div class="sub-header-title">
+                        <button id="display-side-bar" class="display-side-bar"><i class="fa fa-navicon"></i></button>
+                        <div id="main-background-icon" class="icon"><i class="fa fa-sun-o"></i></div>
+                        <div id="main-background-title" class="title">My Day</div>
+                        <button class="list-option-menu"><i class="fa fa-ellipsis-h"></i></button>
+                    </div>
+                    <div class="sub-header-options">
+                        <button class="sort"><i class="fa fa-filter"></i> Sort</button>
+                        <button class="suggestions"><i class="fa fa-lightbulb-o"></i> Suggestions</button>
+                    </div>
+                </div>
+                <div class="header-date" id="header-date">
+                </div>
+            </div>
+            <div class="main-background">
+                <div class="task-setting">
+                    <div class="add-task">
+                        <button><i class="fa fa-genderless"></i></button><input id="add-task" type="text" placeholder="Add a task">
+                    </div>
+                    <div class="task-option">
+                        <div class="options">
+                            <div class="due-date">
+                                <i class="fa fa-calendar-o"></i>
+                            </div>
+                            <div class="remaind-me">
+                                <i class="fa fa-bell-o"></i>
+                            </div>
+                            <div class="repeat">
+                                <i class="fa fa-retweet"></i>
+                            </div>
+                        </div><div class="add-button">
+                            <button>Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="task-background" class="task-background">
+                    
+                </div>
+            </div>
+        </div><div class="right-container">
+            <div class="task-and-steps">
+                <div class="right-task">
+                    <i class="fa fa-genderless"></i><div class="right-task-name"></div><i class="fa fa-star-o"></i></div><div class="steps">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>To-Do</title>
@@ -94,14 +95,45 @@
                     </div>
                 </div>
                 <div id="task-background" class="task-background">
-                    
+
                 </div>
             </div>
-        </div><div class="right-container">
+        </div><div id="right-container" class="right-container">
             <div class="task-and-steps">
                 <div class="right-task">
-                    <i class="fa fa-genderless"></i><div class="right-task-name"></div><i class="fa fa-star-o"></i></div><div class="steps">
+                    <i class="fa fa-genderless"></i><div id="right-task-name" class="right-task-name"></div><i class="fa fa-star-o"></i></div>
+                    <div id="task-details" class="task-details"><div class="add-step">
+                    <i class="fa fa-genderless"></i><input placeholder="Add step" type="text">
                 </div>
+                <button class="add-to-my-day"><i class="fa fa-sun-o"></i>Add to My Day</button>
+                <div class="remainder">
+                    <div class="notify">
+                        <i class="fa fa-bell-o"></i>Remind me
+                    </div><div class="notify">
+                        <i class="fa fa-calendar-o"></i>Add due date
+                    </div><div class="notify">
+                        <i class="fa fa-retweet"></i>Repeat
+                    </div>
+                </div>
+                <div class="pick-category">
+                    <i class="fa fa-tag"></i><input placeholder="Pick a category" type="text">
+                </div>
+                <div class="add-file">
+                    <i class="fa fa-paperclip"></i> Add file
+                </div>
+                <div class="note">
+                    <div class="add-note" contenteditable="true" data-text="Add note">
+
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="right-container-footer">
+                <button id="close-task"><i class="fa fa-toggle-right"></i></button>
+                <div class="created-on">
+                    created today
+                </div>
+                <button><i class="fa fa-trash-o"></i></button>
             </div>
         </div>
     </div>

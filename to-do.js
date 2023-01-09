@@ -5,6 +5,7 @@ const categorys = [{id:"my-day", icon:'<i class="fa fa-sun-o"></i>', name:"My Da
                   {id:"Task", icon:'<i class="fa fa-home"></i>', name:"Task", totalTask:""}];
 const tasks = [];
 var selectedCategory;
+var selectedTask;
 var categoryId = 0;
 const headerDate = document.getElementById("header-date");
 const contentList = document.getElementById("content-list");
@@ -16,6 +17,10 @@ const mainBackgroundIcon = document.getElementById("main-background-icon");
 const mainBackgroundTitle = document.getElementById("main-background-title");
 const displaySideBarButton = document.getElementById("display-side-bar");
 const taskBackground = document.getElementById("task-background");
+const closeTaskButton = document.getElementById("close-task");
+const rightContainer = document.getElementById("right-container");
+const rightTaskName = document.getElementById("right-task-name");
+const currentTask = {}
 
 function init() {
     setDate();
@@ -104,12 +109,17 @@ function setEvents() {
     document.getElementById("side-bar-button").addEventListener("click", hideSideBar);
     document.getElementById("display-side-bar").addEventListener("click", displaySideBar);
     taskInput.addEventListener("keydown", addTask);
+    closeTaskButton.addEventListener('click', closeTask);
+}
+
+function closeTask() {
+    rightContainer.className = "hide";
 }
 
 function addTask() {
 
     if (event.key == 'Enter' && taskInput.value != "") {
-        tasks.push({categoryId:selectedCategory.id, taskId: tasks.length+1, taskName: taskInput.value});
+        tasks.push({categoryId:selectedCategory.id, taskId: tasks.length+1, taskName: taskInput.value, steps:[{id:"", stepDescription:""}], description:""});
         taskInput.value = "";
         renderTask();
     }    
@@ -142,7 +152,23 @@ function renderTask() {
             taskDiv.appendChild(checkDiv);
             taskDiv.appendChild(taskAndMetaDiv);
             taskDiv.appendChild(starDiv);
+            taskDiv.setAttribute('id', tasks[index].taskId)
+            taskDiv.addEventListener('click', selectTask);
+
             taskBackground.appendChild(taskDiv);
+        }
+    }
+}
+
+function selectTask() {
+    let id = this.id;
+
+    for (let index = 0; index < tasks.length; index++) {
+
+        if (id == tasks[index].taskId) {
+            rightContainer.className = "right-container";
+            rightTaskName.innerHTML = tasks[index].taskName;
+            selectedTask = tasks[index];
         }
     }
 }

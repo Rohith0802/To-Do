@@ -20,6 +20,7 @@ const taskBackground = document.getElementById("task-background");
 const closeTaskButton = document.getElementById("close-task");
 const rightContainer = document.getElementById("right-container");
 const rightTaskName = document.getElementById("right-task-name");
+const addNoteDiv = document.getElementById("add-note");
 const currentTask = {}
 
 function init() {
@@ -91,6 +92,9 @@ function selectCategory() {
             break;
         }
     }
+    selectedTask = undefined;
+    rightContainer.className = "right-container";
+    middleContainer.className = "middle-container";
 }
 
 function changeMiddleContainer() {
@@ -110,10 +114,29 @@ function setEvents() {
     document.getElementById("display-side-bar").addEventListener("click", displaySideBar);
     taskInput.addEventListener("keydown", addTask);
     closeTaskButton.addEventListener('click', closeTask);
+    addNoteDiv.addEventListener('blur', getNote);
+}
+
+function getNote() {
+
+    for (let index = 0; index < tasks.length; index++) {
+        
+        if (selectedTask.taskId == tasks[index].taskId) {
+            tasks[index].description = addNoteDiv.innerText;
+            break;
+        }
+    }
 }
 
 function closeTask() {
     rightContainer.className = "hide";
+
+    if (mainBackgroundIcon.className == "hide") {
+        middleContainer.className = "middle-without-left"; 
+    } else {
+        middleContainer.className = "middle-container";
+    }
+    selectedTask = undefined;
 }
 
 function addTask() {
@@ -166,28 +189,45 @@ function selectTask() {
     for (let index = 0; index < tasks.length; index++) {
 
         if (id == tasks[index].taskId) {
-            rightContainer.className = "right-container";
+
+            if (selectedTask == undefined) {
+                rightContainer.className = "display-right-container";
+                
+                if (mainBackgroundIcon.className === "hide") {
+                    middleContainer.className = "middle-and-right";
+                } else {
+                    middleContainer.className = "middle-with-left-and-right";
+                }
+            }
             rightTaskName.innerHTML = tasks[index].taskName;
+            addNoteDiv.innerHTML = tasks[index].description;
             selectedTask = tasks[index];
         }
     }
 }
 
 function hideSideBar() {
-    // leftContainer.classList.remove("left-container");
     leftContainer.classList.add("hide");
-    middleContainer.classList.add("middle-without-left");
+
+    if (selectedTask == undefined) {
+        middleContainer.className = "middle-without-left";
+    } else {
+        middleContainer.className = "middle-and-right";
+    }
     mainBackgroundIcon.classList.remove("icon");
-    mainBackgroundIcon.classList.add("hide");
+    mainBackgroundIcon.className = "hide";
     displaySideBarButton.classList.add("show");
 }
 
 function displaySideBar() {
     leftContainer.classList.remove("hide");
-    // leftContainer.classList.add("left-container");
-    middleContainer.classList.remove("middle-without-left");
-    // middleContainer.classList.add("middle-container");
-    mainBackgroundIcon.classList.add("icon");
+
+    if (selectedTask == undefined) {
+        middleContainer.className = "middle-container";
+    } else {
+        middleContainer.className = "middle-with-left-and-right";
+    }
+    mainBackgroundIcon.className = "icon";
     displaySideBarButton.classList.remove("show");
 }
 

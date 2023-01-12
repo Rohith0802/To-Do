@@ -2,7 +2,7 @@ const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', '
 const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const categorys = [{id:"my-day", icon:'<i class="fa fa-sun-o"></i>', name:"My Day", totalTask:""}, {id:"important", icon:'<i class="fa fa-star-o"></i>', name:"Important", totalTask:""},
                   {id:"planned", icon:'<i class="fa fa-calendar"></i>', name:"Planned", totalTask:""}, {id:"assigned", icon:'<i class="fa fa-user-o"></i>', name:"Assigned to me", totalTask:""}, 
-                  {id:"Task", icon:'<i class="fa fa-home"></i>', name:"Task", totalTask:""}];
+                  {id:"task", icon:'<i class="fa fa-home"></i>', name:"Task", totalTask:""}];
 const tasks = [];
 var selectedCategory;
 var selectedTask;
@@ -21,6 +21,8 @@ const closeTaskButton = document.getElementById("close-task");
 const rightContainer = document.getElementById("right-container");
 const rightTaskName = document.getElementById("right-task-name");
 const addNoteDiv = document.getElementById("add-note");
+const rightDivCompleted = document.getElementById("completed");
+const rightDivImportant = document.getElementById("important");
 const currentTask = {}
 
 function init() {
@@ -115,6 +117,8 @@ function setEvents() {
     taskInput.addEventListener("keydown", addTask);
     closeTaskButton.addEventListener('click', closeTask);
     addNoteDiv.addEventListener('blur', getNote);
+    rightDivCompleted.addEventListener('click', markTaskCompleted);
+    rightDivImportant.addEventListener('click', markTaskImportant);
 }
 
 function getNote() {
@@ -142,45 +146,161 @@ function closeTask() {
 function addTask() {
 
     if (event.key == 'Enter' && taskInput.value != "") {
-        tasks.push({categoryId:selectedCategory.id, taskId: tasks.length+1, taskName: taskInput.value, steps:[{id:"", stepDescription:""}], description:""});
+        tasks.push({categoryId:selectedCategory.id, taskId: tasks.length+1, taskName: taskInput.value, steps:[{id:"", stepDescription:""}], description:"", isImportant:false, isCompleted:false});
         taskInput.value = "";
         renderTask();
-    }    
+    }
 }
 
 function renderTask() {
+    let completedTaskCount = 0;
     taskBackground.innerHTML = "";
+
+    switch(selectedCategory.id) {
+        case"important":
+            for (let index = 0; index < tasks.length; index++) {
+
+                if (tasks[index].isImportant == true) {
+                    buildTask(index);
+                }
+            }
+        break;
+
+        case "task":
+            for (let index = 0; index < tasks.length; index++) {
+                if (tasks[index].isCompleted == true) {
+                    
+                } else {
+                    buildTask(index);
+                }
+            }
+        break;
+
+        default:
+            for (let index = 0; index < tasks.length; index++) {
+                if (selectedCategory.id == tasks[index].categoryId) {
+                    buildTask(index);
+                }
+            }
+    }
+}
+
+function buildTask(index) {
+    var taskDiv = createElement("div");
+    var checkDiv = createElement("div");
+    var taskAndMetaDiv = createElement("div");
+    var taskNameDiv = createElement("div");
+    var starDiv = createElement("div");
+
+    if (tasks[index].isImportant == true) {
+        starDiv.innerHTML = '<i class="fa fa-star"></i>';
+    } else {
+        starDiv.innerHTML = '<i class="fa fa-star-o"></i>';
+    }
+
+    if (tasks[index].isCompleted == true) {
+        checkDiv.innerHTML = '<i class="fa fa-check-circle"></i>';
+    } else {
+        checkDiv.innerHTML = '<i class="fa fa-circle-o"></i>';
+    }            
+    taskNameDiv.innerHTML = tasks[index].taskName;
+
+    taskDiv.classList.add("task");
+    taskDiv.classList.add("content-hover")
+    checkDiv.classList.add("check");
+    taskAndMetaDiv.classList.add("task-name-and-meta-data");
+    taskNameDiv.classList.add("task-name");
+    starDiv.classList.add("star");
+
+    taskAndMetaDiv.addEventListener('click', selectTask);
+    starDiv.addEventListener('click', setTaskImportant);
+    checkDiv.addEventListener('click', setTaskCompleted);
+
+    taskAndMetaDiv.appendChild(taskNameDiv);
+    taskDiv.appendChild(checkDiv);
+    taskDiv.appendChild(taskAndMetaDiv);
+    taskDiv.appendChild(starDiv);
+
+    taskAndMetaDiv.setAttribute('id', tasks[index].taskId);
+    checkDiv.setAttribute('id', 'check-'.concat(tasks[index].taskId));
+    starDiv.setAttribute('id', 'star-'.concat(tasks[index].taskId));
+    taskBackground.appendChild(taskDiv);
+}
+
+function setTaskCompleted() {
+    let id = this.id;
+
+    for (let index = 0; index < tasks.length; index++) {
+
+        if (tasks[index].taskId == id.split('-')[1]) {
+            
+            if (tasks[index].isCompleted == true) {
+                tasks[index].isCompleted = false;
+            } else {
+                tasks[index].isCompleted = true;
+            }
+            renderRightContainer(index);
+            break;
+        }
+    }
+    renderTask();
+}
+
+function setTaskImportant() {
+    let id = this.id;
 
     for (let index = 0; index < tasks.length; index++) {
         
-        if (selectedCategory.id == tasks[index].categoryId) {
-            var taskDiv = createElement("div");
-            var checkDiv = createElement("div");
-            var taskAndMetaDiv = createElement("div");
-            var taskNameDiv = createElement("div");
-            var starDiv = createElement("div");
+        if (tasks[index].taskId == id.split('-')[1]) {
 
-            checkDiv.innerHTML = '<i class="fa fa-square-o"></i>';
-            starDiv.innerHTML = '<i class="fa fa-star-o"></i>';
-            taskNameDiv.innerHTML = tasks[index].taskName;
-
-            taskDiv.classList.add("task");
-            taskDiv.classList.add("content-hover")
-            checkDiv.classList.add("check");
-            taskAndMetaDiv.classList.add("task-name-and-meta-data");
-            taskNameDiv.classList.add("task-name");
-            starDiv.classList.add("star");
-
-            taskAndMetaDiv.appendChild(taskNameDiv);
-            taskDiv.appendChild(checkDiv);
-            taskDiv.appendChild(taskAndMetaDiv);
-            taskDiv.appendChild(starDiv);
-            taskDiv.setAttribute('id', tasks[index].taskId)
-            taskDiv.addEventListener('click', selectTask);
-
-            taskBackground.appendChild(taskDiv);
+            if (tasks[index].isImportant == true) {
+                tasks[index].isImportant = false;
+            } else {
+                tasks[index].isImportant = true;
+            }
+            renderRightContainer(index);
+            break;
         }
     }
+    renderTask();
+}
+
+function markTaskCompleted() {
+
+    for (let index = 0; index < tasks.length; index++) {
+
+        if (selectedTask.taskId == tasks[index].taskId) {
+
+            if (tasks[index].isCompleted == true) {
+                tasks[index].isCompleted = false;
+                rightDivCompleted.innerHTML = '<i class="fa fa-circle-o"></i>';
+            } else {
+                tasks[index].isCompleted = true;
+                rightDivCompleted.innerHTML = '<i class="fa fa-check-circle"></i>';
+            }
+            break;
+        }
+    }
+    renderTask();
+}
+
+function markTaskImportant() {
+
+    for (let index = 0; index < tasks.length; index++) {
+
+        if (selectedTask.taskId == tasks[index].taskId) {
+
+            if (tasks[index].isImportant == true) {
+                tasks[index].isImportant = false;
+                rightDivImportant.innerHTML = '<i class="fa fa-star-o"></i>';
+            } else {
+                tasks[index].isImportant = true;
+                rightDivImportant.innerHTML = '<i class="fa fa-star"></i>';
+            }
+            break;
+        }
+    }
+    renderTask();
 }
 
 function selectTask() {
@@ -190,20 +310,35 @@ function selectTask() {
 
         if (id == tasks[index].taskId) {
 
-            if (selectedTask == undefined) {
-                rightContainer.className = "display-right-container";
-                
-                if (mainBackgroundIcon.className === "hide") {
-                    middleContainer.className = "middle-and-right";
-                } else {
-                    middleContainer.className = "middle-with-left-and-right";
-                }
+            rightContainer.className = "display-right-container";
+
+            if (mainBackgroundIcon.className == "hide") {
+                middleContainer.className = "middle-and-right";
+            } else {
+                middleContainer.className = "middle-with-left-and-right";
             }
-            rightTaskName.innerHTML = tasks[index].taskName;
-            addNoteDiv.innerHTML = tasks[index].description;
-            selectedTask = tasks[index];
+        renderRightContainer(index);
+        break;
         }
     }
+}
+
+function renderRightContainer(index) {
+
+    if (tasks[index].isCompleted == true) {
+        rightDivCompleted.innerHTML = '<i class="fa fa-check-circle"></i>';
+    } else {
+        rightDivCompleted.innerHTML = '<i class="fa fa-circle-o"></i>';
+    }
+
+    if (tasks[index].isImportant == true) {
+        rightDivImportant.innerHTML = '<i class="fa fa-star"></i>'
+    } else {
+        rightDivImportant.innerHTML = '<i class="fa fa-star-o"></i>'
+    }
+    rightTaskName.innerHTML = tasks[index].taskName;
+    addNoteDiv.innerHTML = tasks[index].description;
+    selectedTask = tasks[index];
 }
 
 function hideSideBar() {

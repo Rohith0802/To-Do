@@ -3,13 +3,6 @@
     padding: 0%;
 }
 
-@media only screen and (max-width: 768px) {
-    .whole-container, .right-container, .left-container, .middle-container {
-        width: 30%;
-        height: 75%;
-    }
-} 
-
 body, html {
     width: 100%;
     height: 100%;
@@ -90,7 +83,7 @@ body, html {
 }
 
 .search {
-    width: 92%;
+    width: 90.9%;
     color: black;
     outline: none;
 }
@@ -163,7 +156,7 @@ body, html {
 .right-container, .display-right-container {
     display: none;
     height: 100%;
-    width: 28.1%;
+    width: 27.8%;
     font-weight: 350;
     background-color: #faf9f8;
     box-shadow: -2px 3px 3px 1px #e5e4e3;
@@ -231,7 +224,7 @@ hr {
 .new-list {
     display: inline-block;
     height: 9%;
-    width: 78%;
+    width: 76.6%;
 }
 
 .create-group {
@@ -303,7 +296,7 @@ hr {
 .side-bar-footer-icon {
     display: inline-block;
     height: 100%;
-    width: 20%;
+    width: 18.9%;
     text-align: center;
     font-size: 1.1em;
 }
@@ -532,11 +525,11 @@ hr {
 .hide-complete i, .show-complete  i {
     font-size: 1.5em;
     margin-right: 1.5%;
-    transform: rotate(0deg);
+    transform: rotate(-90deg);
 }
 
 .show-complete i {
-    transform: rotate(-90deg);
+    transform: rotate(0deg);
 }
 
 .check, .star {

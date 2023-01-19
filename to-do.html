@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
 </head>
 <body>
     <div class="top-nav">
@@ -18,7 +18,10 @@
        </div>
        <div class="search-bar">
             <div class="search-box">
-                <button class="search-button"><i class="fa fa-search"></i></button><input id="search" type="search" class="search" onfocus="this.placeholder='search'"  onblur="this.placeholder=''">
+                <button class="search-button">
+                    <i class="fa fa-search"></i>
+                </button>
+                <input id="search" type="search" class="search" onfocus="this.placeholder='search'"  onblur="this.placeholder=''">
             </div>
        </div>
        <div class="setting">
@@ -46,24 +49,49 @@
                 <div id="content-list" class="content-list">
                 </div>
                 <div class="new-list">
-                    <div class="plus-icon"><i class="fa fa-plus"></i></div>
+                    <div class="plus-icon">
+                        <i class="fa fa-plus"></i>
+                    </div>
                     <input id="new-list" type="text" placeholder="New list">
-                </div><div class="create-group">
-                    <button class="create-group-button"><i class="fa fa-plus-square-o"></i></button>
+                </div>
+                <div class="create-group">
+                    <button class="create-group-button">
+                        <i class="fa fa-plus-square-o"></i>
+                    </button>
                 </div>
             </div>
             <div class="side-bar-footer">
-                <div class="side-bar-footer-icon"><i class="fa fa-envelope-o"></i></div><div class="side-bar-footer-icon"><i class="fa fa-calendar-o"></i></div><div class="side-bar-footer-icon"><i class="fa fa-users"></i></div><div class="side-bar-footer-icon"><i class="fa fa-paperclip"></i></div><div class="side-bar-footer-icon"><i class="fa fa-check"></i></div>
+                <div class="side-bar-footer-icon">
+                    <i class="fa fa-envelope-o"></i>
+                </div>
+                <div class="side-bar-footer-icon">
+                    <i class="fa fa-calendar-o"></i>
+                </div>
+                <div class="side-bar-footer-icon">
+                    <i class="fa fa-users"></i>
+                </div>
+                <div class="side-bar-footer-icon">
+                    <i class="fa fa-paperclip"></i>
+                </div>
+                <div class="side-bar-footer-icon">
+                    <i class="fa fa-check"></i>
+                </div>
             </div>
         </div>
         <div id="middle-container" class="middle-container">
             <div class="middle-container-header">
                 <div class="middle-container-sub-header">
                     <div class="sub-header-title">
-                        <button id="display-side-bar" class="display-side-bar"><i class="fa fa-navicon"></i></button>
-                        <div id="main-background-icon" class="icon"><i class="fa fa-sun-o"></i></div>
+                        <button id="display-side-bar" class="display-side-bar">
+                            <i class="fa fa-navicon"></i>
+                        </button>
+                        <div id="main-background-icon" class="icon">
+                            <i class="fa fa-sun-o"></i>
+                        </div>
                         <div id="main-background-title" class="title">My Day</div>
-                        <button class="list-option-menu"><i class="fa fa-ellipsis-h"></i></button>
+                        <button class="list-option-menu">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </button>
                     </div>
                     <div class="sub-header-options">
                         <button class="sort"><i class="fa fa-filter"></i> Sort</button>
@@ -76,7 +104,10 @@
             <div class="main-background">
                 <div class="task-setting">
                     <div class="add-task">
-                        <button><i class="fa fa-genderless"></i></button><input id="add-task" type="text" placeholder="Add a task">
+                        <button>
+                            <i class="fa fa-genderless"></i>
+                        </button>
+                        <input id="add-task" type="text" placeholder="Add a task">
                     </div>
                     <div class="task-option">
                         <div class="options">
@@ -95,25 +126,32 @@
                     </div>
                 </div>
                 <div id="task-background" class="task-background">
-                    <div class="completed-button">
-                        <span class="hide-complete"><i class="fa fa-sort-down"></i></span><span>Completed</span><span class="completed-count">1</span>
-                    </div>
                 </div>
             </div>
-        </div><div id="right-container" class="right-container">
+        </div> 
+        <div id="right-container" class="right-container">
             <div class="task-and-steps">
                 <div class="right-task">
-                    <div id="completed" class="completed"></div><div id="right-task-name" class="right-task-name"></div><div id="important" class="important"></div></div>
-                    <div id="task-details" class="task-details"><div class="add-step">
-                    <i class="fa fa-genderless"></i><input placeholder="Add step" type="text">
+                    <div id="completed" class="completed"></div>
+                    <div id="right-task-name" class="right-task-name"></div>
+                    <div id="important" class="important"></div>
                 </div>
-                <button class="add-to-my-day"><i class="fa fa-sun-o"></i>Add to My Day</button>
+                    <div id="task-details" class="task-details">
+                        <div class="add-step">
+                        <i class="fa fa-genderless"></i>
+                        <input placeholder="Add step" type="text">
+                </div>
+                <button class="add-to-my-day">
+                    <i class="fa fa-sun-o"></i>Add to My Day
+                </button>
                 <div class="remainder">
                     <div class="notify">
                         <i class="fa fa-bell-o"></i>Remind me
-                    </div><div class="notify">
+                    </div>
+                    <div class="notify">
                         <i class="fa fa-calendar-o"></i>Add due date
-                    </div><div class="notify">
+                    </div>
+                    <div class="notify">
                         <i class="fa fa-retweet"></i>Repeat
                     </div>
                 </div>
@@ -139,6 +177,7 @@
             </div>
         </div>
     </div>
-    <script src="to-do.js"></script>
+    <script type="module" src="to-do.js"></script>
+    <!-- <script type="module" src="fetchapi.js"></script> -->
 </body>
 </html>

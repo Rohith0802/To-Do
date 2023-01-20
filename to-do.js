@@ -7,6 +7,7 @@ const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', '
 //                    { id: 4, icon: 'fa fa-user-o', name: "Assigned to me", totalTask: "" },
 //                    { id: 5, icon: 'fa fa-home', name: "Task", totalTask: "" }];
 const tasks = [];
+var temporaryCategory = [];
 var selectedCategoryId = 1;
 var selectedTask;
 const headerDate = document.getElementById("header-date");
@@ -31,8 +32,6 @@ function init() {
     setDate();
     setEvents();
     buildCategory();
-    selectCategory();
-    // defaultSelect();
 }
 
 function setDate() {
@@ -58,12 +57,15 @@ function buildCategory() {
     
     result.then((categorys) => {
         contentList.innerHTML = "";
-        categorys.forEach((category) => renderCategory(category))
-    })
+		temporaryCategory = categorys;
+        categorys.forEach((category) => {
+			renderCategory(category);
+		});
+        selectCategory();
+    });
 }
 
 function renderCategory(category) {
-
     var categoryDiv = createElement("div", {id:category.id, className:"content-hover"});
     var iconContainer = createElement("div", {id:"", className:"side-container-icon"});
     var nameContainer = createElement("div", {id:"", className:"side-container-content"});
@@ -81,33 +83,34 @@ function renderCategory(category) {
     categoryDiv.addEventListener("click", selectCategory);
 
     contentList.appendChild(categoryDiv);
+
+    if (category.id == 5) {
+        contentList.appendChild(createElement("div", {id:"", className:"break-category"}));
+    }
 }
 
 function selectCategory() {
     let id = (this == undefined) ? selectedCategoryId : this.id;
-    var result = getOrSaveDetails("/categories", "GET");
 
-    result.then((categorys) => {
-        for (let category of categorys) {
+	for (let category of temporaryCategory) {
 
-            if (id == category.id) {
-                var currentCategory = document.getElementById(id);
-                
-                currentCategory.className = "selected-category"
-    
-                if (selectedCategoryId != id) {
-                    var previousCategory = document.getElementById(selectedCategoryId);
-                    previousCategory.className = "content-hover"
-                }
-                selectedCategoryId = category.id;
-                mainBackgroundIcon.innerHTML = "";
-                mainBackgroundIcon.appendChild(createElement('i', {id:"", className:category.iconClass}));
-                mainBackgroundTitle.innerText = category.name;
-                renderTask();
-                break;
-            }
-        }
-    })
+		if (id == category.id) {
+			var currentCategory = document.getElementById(id);
+			
+			currentCategory.className = "selected-category"
+
+			if (selectedCategoryId != id) {
+				var previousCategory = document.getElementById(selectedCategoryId);
+				previousCategory.className = "content-hover"
+			}
+			selectedCategoryId = category.id;
+			mainBackgroundIcon.innerHTML = "";
+			mainBackgroundIcon.appendChild(createElement('i', {id:"", className:category.iconClass}));
+			mainBackgroundTitle.innerText = category.name;
+			renderTask();
+			break;
+		}
+	}
     selectedTask = undefined;
     rightContainer.className = "right-container";
     middleContainer.className = "middle-container";
@@ -234,10 +237,10 @@ function toggleCompletedTask() {
 }
 
 function buildTask(task, alignOrder) {
+    var taskNameDiv;
     var taskDiv = createElement("div", {id:"task-".concat(task.id), className:"task-hover"});
     var checkDiv = createElement("div", {id:"check-".concat(task.id), className:"check"});
     var taskAndMetaDiv = createElement("div", {id:task.id, className:"task-name-and-meta-data"});
-    var taskNameDiv;
     var starDiv = createElement("div", {id:"star-".concat(task.id), className:"star"});
 
     if (task.isImportant == true) {
@@ -399,7 +402,7 @@ function hideSideBar() {
 function displaySideBar() {
     leftContainer.classList.remove("hide");
 
-    if (selectedTask == undefined) {
+    if (rightContainer != "display-right-container") {
         middleContainer.className = "middle-container";
     } else {
         middleContainer.className = "middle-with-left-and-right";
@@ -412,14 +415,13 @@ function addCategory() {
 
     if (event.key == 'Enter' && newList.value != "") {
         let newCategory = { id:0, iconClass: 'fa fa-tasks', name: newList.value, count:0 };
-        var result = getOrSaveDetails("/category", 'POST', newCategory);
 
-        result.then((value) => {
+        getOrSaveDetails("/category", 'POST', newCategory).then((value) => {
             newList.value = "";
             selectedCategoryId = value;
             buildCategory();
-            selectCategory();
-        });    
+            // selectCategory();
+        });
     }
 }
 

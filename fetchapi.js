@@ -10,6 +10,7 @@ export async function getOrSaveDetails(url, type, data) {
     if (type == "POST") {
         var request = {headers: {'Content-type': 'application/json'},method: type, body: JSON.stringify(data)};
         const response = await fetch(defaultUrl.concat(url), request);
+        console.log(response.json);
         return await response.json();
     }
 }

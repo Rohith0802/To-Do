@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>To-Do</title>
     <link rel="stylesheet" href="to-do.css">
@@ -8,34 +9,36 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
 </head>
+
 <body>
     <div class="top-nav">
-       <div class="side-nav">
-        <i class="fa fa-th"></i>
-       </div>
-       <div class="to-do">
-        <a href="">To Do</a>
-       </div>
-       <div class="search-bar">
+        <div class="side-nav">
+            <i class="fa fa-th"></i>
+        </div>
+        <div class="to-do">
+            <a href="">To Do</a>
+        </div>
+        <div class="search-bar">
             <div class="search-box">
                 <button class="search-button">
                     <i class="fa fa-search"></i>
                 </button>
-                <input id="search" type="search" class="search" onfocus="this.placeholder='search'"  onblur="this.placeholder=''">
+                <input id="search" type="search" class="search" onfocus="this.placeholder='search'"
+                    onblur="this.placeholder=''">
             </div>
-       </div>
-       <div class="setting">
-        <i class="fa fa-gear"></i>
-       </div>
-       <div class="help">
-        <i class="fa fa-question"></i>
-       </div>
-       <div class="whats-new">
-        <i class="fa fa-bullhorn"></i>
-       </div>
-       <div class="user">
-        <i class="fa fa-user-circle"></i>
-       </div>
+        </div>
+        <div class="setting">
+            <i class="fa fa-gear"></i>
+        </div>
+        <div class="help">
+            <i class="fa fa-question"></i>
+        </div>
+        <div class="whats-new">
+            <i class="fa fa-bullhorn"></i>
+        </div>
+        <div class="user">
+            <i class="fa fa-user-circle"></i>
+        </div>
     </div>
 
     <div class="whole-container">
@@ -48,11 +51,11 @@
             <div class="total-list">
                 <div id="content-list" class="content-list">
                 </div>
-                <div class="new-list">
+                <div class="add-category">
                     <div class="plus-icon">
                         <i class="fa fa-plus"></i>
                     </div>
-                    <input id="new-list" type="text" placeholder="New list">
+                    <input id="add-category" type="text" placeholder="New list">
                 </div>
                 <div class="create-group">
                     <button class="create-group-button">
@@ -117,10 +120,11 @@
                             <div class="remaind-me">
                                 <i class="fa fa-bell-o"></i>
                             </div>
-                            <div class="repeat">    
+                            <div class="repeat">
                                 <i class="fa fa-retweet"></i>
                             </div>
-                        </div><div class="add-button">
+                        </div>
+                        <div class="add-button">
                             <button>Add</button>
                         </div>
                     </div>
@@ -128,44 +132,44 @@
                 <div id="task-background" class="task-background">
                 </div>
             </div>
-        </div> 
+        </div>
         <div id="right-container" class="right-container">
             <div class="task-and-steps">
-                <div class="right-task">
-                    <div id="completed" class="completed"></div>
+                <div id="right-task" class="right-task">
+                    <!-- <div id="completed" class="completed"></div>
                     <div id="right-task-name" class="right-task-name"></div>
-                    <div id="important" class="important"></div>
+                    <div id="important" class="important"></div> -->
                 </div>
-                    <div id="task-details" class="task-details">
-                        <div class="add-step">
+                <div id="task-details" class="task-details">
+                    <div class="add-step">
                         <i class="fa fa-genderless"></i>
                         <input placeholder="Add step" type="text">
-                </div>
-                <button class="add-to-my-day">
-                    <i class="fa fa-sun-o"></i>Add to My Day
-                </button>
-                <div class="remainder">
-                    <div class="notify">
-                        <i class="fa fa-bell-o"></i>Remind me
                     </div>
-                    <div class="notify">
-                        <i class="fa fa-calendar-o"></i>Add due date
+                    <button class="add-to-my-day">
+                        <i class="fa fa-sun-o"></i>Add to My Day
+                    </button>
+                    <div class="remainder">
+                        <div class="notify">
+                            <i class="fa fa-bell-o"></i>Remind me
+                        </div>
+                        <div class="notify">
+                            <i class="fa fa-calendar-o"></i>Add due date
+                        </div>
+                        <div class="notify">
+                            <i class="fa fa-retweet"></i>Repeat
+                        </div>
                     </div>
-                    <div class="notify">
-                        <i class="fa fa-retweet"></i>Repeat
+                    <div class="pick-category">
+                        <i class="fa fa-tag"></i><input placeholder="Pick a category" type="text">
                     </div>
-                </div>
-                <div class="pick-category">
-                    <i class="fa fa-tag"></i><input placeholder="Pick a category" type="text">
-                </div>
-                <div class="add-file">
-                    <i class="fa fa-paperclip"></i> Add file
-                </div>
-                <div class="note">
-                    <pre id="add-note" class="add-note" contenteditable="true">
+                    <div class="add-file">
+                        <i class="fa fa-paperclip"></i> Add file
+                    </div>
+                    <div class="note">
+                        <pre id="add-note" class="add-note" contenteditable="true">
 
                     </pre>
-                </div>
+                    </div>
                 </div>
             </div>
             <div class="right-container-footer">
@@ -180,4 +184,5 @@
     <script type="module" src="to-do.js"></script>
     <!-- <script type="module" src="fetchapi.js"></script> -->
 </body>
+
 </html>

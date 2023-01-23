@@ -139,9 +139,7 @@ body, html {
 .middle-container, .middle-without-left, .middle-with-left-and-right, .middle-and-right {
     display: inline-block;
     height: 100%;
-    /* width: 48.5%; */
     width: 76.6%;
-    /* width: 100%; */
     background-color: #faf9f8;
     vertical-align: top;
     font-family: 'Segoe UI',arial,sans-serif;
@@ -227,7 +225,7 @@ hr {
     font-size: 1.1em;
 }
 
-.new-list {
+.add-category {
     display: inline-block;
     height: 10%;
     width: 76.6%;
@@ -269,7 +267,7 @@ hr {
     color: #2564cf;
 }
 
-.new-list input {
+.add-category input {
     display: inline-block;
     width: 69%;
     height: 100%;
@@ -280,16 +278,16 @@ hr {
 }
 
 .search-box:hover .search, .search-box:hover .search-button, .task-hover:hover,
-.search-box:hover, .content-hover:hover, .new-list:hover .plus-icon, .task-hover:hover
-.new-list:hover input, .new-list:hover, .side-bar-footer-icon:hover, .content-hover:hover div {
+.search-box:hover, .content-hover:hover, .add-category:hover .plus-icon, .task-hover:hover
+.add-category:hover input, .add-category:hover, .side-bar-footer-icon:hover, .content-hover:hover div {
     background-color: #f5f5f5;
 }
 
-.new-list input::placeholder, .add-task input::placeholder {
+.add-category input::placeholder, .add-task input::placeholder {
     color: #2564cf;
 }
 
-.new-list input:focus::-webkit-input-placeholder, .add-task input::-webkit-input-placeholder {
+.add-category input:focus::-webkit-input-placeholder, .add-task input::-webkit-input-placeholder {
     color: gray;    
 }
 
@@ -385,7 +383,6 @@ hr {
 .header-date {
     font-size: 0.77em;
     color: #8f8f8e;
-    /* padding-left: 3%; */
 }
 
 .main-background {
@@ -445,7 +442,6 @@ hr {
 .options {
     display: inline-block;
     width: 25%;
-    /* margin: 0.8% 0%; */
 }
 
 .due-date, .remaind-me, .repeat {
@@ -468,7 +464,7 @@ hr {
 
 .add-button {
     display: inline-block;
-    width: 75%;
+    width: 74%;
     height: 100%;
     vertical-align: top;
     text-align: right;

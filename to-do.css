@@ -557,7 +557,6 @@ hr {
 .task-name, .task-name-on-strike {
     height: 50%;
     margin: 0.76em 0em;
-    font-weight: 350;
     width: 100%;
     overflow-x: hidden;
 }

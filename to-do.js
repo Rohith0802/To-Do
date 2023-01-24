@@ -131,11 +131,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
             if (id == category.id) {
                 var currentCategory = document.getElementById(id);
                 currentCategory.className = "selected-category"
-
-                if (selectedCategoryId != id) {
-                    var previousCategory = document.getElementById(selectedCategoryId);
-                    previousCategory.className = "content-hover"
-                }
+                removeSelectStyle(id);                
                 selectedCategoryId = category.id;
                 mainBackgroundIcon.innerHTML = "";
                 mainBackgroundIcon.appendChild(createElement('i', { id: "", className: category.iconClass }));
@@ -144,7 +140,13 @@ import { getOrSaveDetails } from "./fetchapi.js";
                 break;
             }
         }
-        // selectedTask = undefined;
+    }
+
+    function removeSelectStyle(id) {
+        if (selectedCategoryId != id) {
+            var previousCategory = document.getElementById(selectedCategoryId);
+            previousCategory.className = "content-hover"
+        }
     }
 
 
@@ -177,7 +179,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
     function closeTask() {
         rightContainer.className = "hide";
         middleContainer.className = (mainBackgroundIcon.className != "hide")
-            ? "middle-container" : "middle-without-left";
+                ? "middle-container" : "middle-without-left";
     }
 
     /**
@@ -252,7 +254,6 @@ import { getOrSaveDetails } from "./fetchapi.js";
                     if (value == selectedCategoryId) {
                         if (task.isCompleted) {
                             if (selectedCategoryId != 2) {
-
                                 if (completedTaskCount == 0) {
                                     createCompleteButton();
                                 }
@@ -314,29 +315,19 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * @param alignOrder - "afterbegin" or "beforeend".
      */
     function renderTask(task, alignOrder) {
-        var taskNameDiv;
+        var taskNameDiv = createElement("div", { id: "", className: "task-name" });
         var taskDiv = createElement("div", { id: "task-".concat(task.id), className: "task-hover" });
         var checkDiv = createElement("div", { id: "check-".concat(task.id), className: "check" });
         var taskAndMetaDiv = createElement("div", { id: task.id, className: "task-name-and-meta-data" });
         var starDiv = createElement("div", { id: "star-".concat(task.id), className: "star" });
 
-        if (task.isImportant == true) {
-            starDiv.appendChild(createElement('i', { id: "", className: "fa fa-star" }));
-        } else {
-            starDiv.appendChild(createElement('i', { id: "", className: "fa fa-star-o" }));
-        }
+        createImportantElement(task, starDiv);
+        createCompleteElement(task, checkDiv,taskNameDiv);
 
-        if (task.isCompleted == true) {
-            taskNameDiv = createElement("div", { id: "", className: "task-name-on-strike" });
-            checkDiv.appendChild(createElement('i', { id: "", className: "fa fa-check-circle" }));
-        } else {
-            taskNameDiv = createElement("div", { id: "", className: "task-name" });
-            checkDiv.appendChild(createElement('i', { id: "", className: "fa fa-circle-o" }));
-        }
         taskNameDiv.innerText = task.name;
         taskAndMetaDiv.addEventListener('click', selectTask);
-        starDiv.addEventListener('click', setTaskImportant);
-        checkDiv.addEventListener('click', setTaskCompleted);
+        starDiv.addEventListener('click', setTaskImportantStatus);
+        checkDiv.addEventListener('click', setTaskCompletedStatus);
 
         taskAndMetaDiv.appendChild(taskNameDiv);
         taskDiv.appendChild(checkDiv);
@@ -346,54 +337,97 @@ import { getOrSaveDetails } from "./fetchapi.js";
         taskBackground.insertAdjacentElement(alignOrder, taskDiv);
     }
 
+    function createImportantElement(task, starDiv) {
+
+        if (task.isImportant == true) {
+            starDiv.appendChild(createElement('i', { id: "", className: "fa fa-star" }));
+        } else {
+            starDiv.appendChild(createElement('i', { id: "", className: "fa fa-star-o" }));
+        }
+    }
+
+    function createCompleteElement(task, checkDiv,taskNameDiv) {
+
+        if (task.isCompleted == true) {
+            taskNameDiv.classList.add("strike-name");
+            checkDiv.appendChild(createElement('i', { id: "", className: "fa fa-check-circle" }));
+        } else {
+            taskNameDiv.classList.remove('strike-name');
+            checkDiv.appendChild(createElement('i', { id: "", className: "fa fa-circle-o" }));
+        }
+    }
+
     /**
      * The function gets the task from the server, toggles the isCompleted
      * property, and then sends the task back to the server when a task is clicked.
      */
-    function setTaskCompleted() {
+    function setTaskCompletedStatus() {
         let id = this.id;
         let categories = [];
 
         getOrSaveDetails("/tasks/".concat(id.split('-')[1]), "GET").then((task) => {
-            temporaryCategory.forEach((category) => {
-                if (category.id == selectedCategoryId) {
-                    if (task.isCompleted == true) {
-                        task.isCompleted = false;
-                        category.count++;
-                        categories.push(category);
-                        if (category.id < 6) {
-                            temporaryCategory[4].count++;
-                            categories.push(temporaryCategory[4]);
-                        }
-                        console.log(category);
-                        if (task.isImportant == true) {
-                            console.log('working')
-                            temporaryCategory[1].count++;
-                            categories.push(temporaryCategory[1]);
-                        }
-                    } else {
-                        task.isCompleted = true;
-                        category.count--;
-                        categories.push(category);
-                        if (category.id < 6) {
-                            temporaryCategory[4].count--;
-                            categories.push(temporaryCategory[4]);
-                        }
-                        if (task.isImportant == true) {
-                            temporaryCategory[1].count--;
-                            categories.push(temporaryCategory[1]);
-                        }
-                    }
-                }
-            });
-
-            if (selectedTask != undefined && selectedTask.id == id.split('-')[1]) {
-                renderRightContainer(task);
+        
+            if (task.isCompleted == true) {
+                categories.push(...setTaskIncomplete(task));
+            } else {
+                categories.push(...setTaskCompleted(task));
             }
+            changeRightContainer(task, id);
             getOrSaveDetails("/categorys", "POST", categories).then(() => {
                 getOrSaveDetails("/task", "POST", task).then(() => buildCategory());
             })
         });
+    }
+
+    function changeRightContainer(task, id) {
+
+        if (selectedTask != undefined && selectedTask.id == id.split('-')[1]) {
+            renderRightContainer(task);
+        }
+    }
+
+    function setTaskIncomplete(task) {
+        let categories = [];
+        
+        task.categoryIds.forEach(categoryId => {
+            temporaryCategory.forEach(category => {
+                if (categoryId == category.id) {
+                    if (categoryId == 2) {
+                        if (task.isCompleted == true) {
+                            category.count++;
+                            categories.push(category);
+                        }
+                    } else {
+                        category.count++;
+                        categories.push(category);
+                    }
+                }
+            });
+        })
+        task.isCompleted = false;
+        return categories;
+    }
+
+    function setTaskCompleted(task) {
+        let categories = [];
+
+        task.categoryIds.forEach(categoryId => {
+            temporaryCategory.forEach(category => {
+                if (categoryId == category.id) {
+                    if (categoryId == 2) {
+                        if (task.isCompleted == false) {
+                            category.count--;
+                            categories.push(category);
+                        }
+                    } else {
+                        category.count--;
+                        categories.push(category);
+                    }
+                }
+            });
+        })
+        task.isCompleted = true;
+        return categories;
     }
 
     /**
@@ -402,30 +436,27 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * or remove category id from categoryIds list if isImportnat is true and update
      * the task in server when important icon clicked.
      */
-    function setTaskImportant() {
+    function setTaskImportantStatus() {
         let id = this.id;
 
-        getOrSaveDetails("/tasks/".concat(id.split('-')[1]), "GET").then((task) => {
+        getOrSaveDetails(`/tasks/${id.split('-')[1]}`, "GET").then((task) => {
 
             if (task.isImportant == true) {
                 let categoryIndex = task.categoryIds.indexOf(2);
-                task.categoryIds.splice(categoryIndex, categoryIndex);
+                task.categoryIds.splice(categoryIndex, categoryIndex + 1);
                 task.isImportant = false;
-                if (task.isCompleted == true) {
+                if (task.isCompleted == false) {
                     temporaryCategory[1].count--;
                 }
             } else {
                 task.categoryIds.push(2);
                 task.isImportant = true;
-                if (task.isCompleted == true) {
+                if (task.isCompleted == false) {
                     temporaryCategory[1].count++;
                 }
             }
-
             getOrSaveDetails("/category", "POST", temporaryCategory[1]).then(() => {
-                if (selectedTask != undefined && selectedTask.id == id.split('-')[1]) {
-                    renderRightContainer(task);
-                }
+                changeRightContainer(task, id);
                 getOrSaveDetails("/task", "POST", task).then(() => buildCategory());
             });
         });
@@ -442,7 +473,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
 
             rightContainer.className = "display-right-container";
             middleContainer.className = (mainBackgroundIcon.className == "hide")
-                ? "middle-and-right" : "middle-with-left-and-right";
+                    ? "middle-and-right" : "middle-with-left-and-right";
             let currentTask = document.getElementById('task-'.concat(task.id));
 
             if (selectedTask != undefined) {
@@ -465,22 +496,12 @@ import { getOrSaveDetails } from "./fetchapi.js";
         var rightTaskName = createElement("div", { id: "right-task-name", className: "right-task-name" });
         var rightTaskImportant = createElement("div", { id: "important-".concat(task.id), className: "important" });
 
-        if (task.isCompleted == true) {
-            rightTaskName.classList.add('strike-name')
-            rightTaskCompleted.appendChild(createElement('i', { id: "", className: "fa fa-check-circle" }));
-        } else {
-            rightTaskName.classList.remove('strike-name');
-            rightTaskCompleted.appendChild(createElement('i', { id: "", className: "fa fa-circle-o" }));
-        }
+        createCompleteElement(task, rightTaskCompleted,rightTaskName);
+        createImportantElement(task, rightTaskImportant);
 
-        if (task.isImportant == true) {
-            rightTaskImportant.appendChild(createElement('i', { id: "", className: "fa fa-star" }));
-        } else {
-            rightTaskImportant.appendChild(createElement('i', { id: "", className: "fa fa-star-o" }));
-        }
         rightTask.innerHTML = "";
-        rightTaskImportant.addEventListener('click', setTaskImportant);
-        rightTaskCompleted.addEventListener('click', setTaskCompleted);
+        rightTaskImportant.addEventListener('click', setTaskImportantStatus);
+        rightTaskCompleted.addEventListener('click', setTaskCompletedStatus);
         rightTaskName.innerHTML = task.name;
         rightTask.appendChild(rightTaskCompleted);
         rightTask.appendChild(rightTaskName);
@@ -496,7 +517,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
     function hideSideBar() {
         leftContainer.classList.add("hide");
 
-        middleContainer.className = (rightContainer.className == "hide")
+        middleContainer.className = (rightContainer.className === "hide")
             ? "middle-without-left" : "middle-and-right";
 
         mainBackgroundIcon.classList.remove("icon");
@@ -511,7 +532,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
     function displaySideBar() {
         leftContainer.classList.remove("hide");
 
-        middleContainer.className = (rightContainer.className == "hide")
+        middleContainer.className = (rightContainer.className === "hide")
             ? "middle-container" : "middle-with-left-and-right";
 
         mainBackgroundIcon.className = "icon";

@@ -1,4 +1,6 @@
-import { getOrSaveDetails } from "./fetchapi.js";
+import { getCategories, getTaskById, getAllTasks,
+        saveOrupdateCategories, saveOrupdateCategory, 
+        saveOrUpdateTask } from "./service.js";
 
 (function () {
     var temporaryCategory = [];
@@ -55,7 +57,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * @returns The element that was created.
      */
     function createElement(elementName, attributes) {
-        let element = document.createElement(elementName);
+        var element = document.createElement(elementName);
 
         if (attributes.id != "") {
             element.setAttribute('id', attributes.id);
@@ -73,7 +75,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
      */
     function buildCategory() {
 
-        getOrSaveDetails("/categories", "GET").then((categorys) => {
+        getCategories().then((categorys) => {
             contentList.innerHTML = "";
             temporaryCategory = categorys;
             categorys.forEach((category) => {
@@ -118,7 +120,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * changes the previously selected cateogry to previous class name.
      */
     function selectCategory() {
-        let id;
+        var id;
         
         if (this == undefined) {
             id = selectedCategoryId;
@@ -127,7 +129,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
             selectedTask = undefined;
         }
 
-        for (let category of temporaryCategory) {
+        for (var category of temporaryCategory) {
             if (id == category.id) {
                 var currentCategory = document.getElementById(id);
                 currentCategory.className = "selected-category"
@@ -166,9 +168,9 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * This function gets note added to a task and update it to database.
      */
     function getNote() {
-        getOrSaveDetails("/tasks/".concat(selectedTask.id), "GET").then((task) => {
+        getTaskById(selectedTask.id).then((task) => {
             task.note = addNoteDiv.innerText;
-            getOrSaveDetails("/task", "POST", task);
+            saveOrUpdateTask(task);
         });
     }
 
@@ -177,7 +179,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * right container is closed.
      */
     function closeTask() {
-        rightContainer.className = "hide";
+        rightContainer.className = "right-container";
         middleContainer.className = (mainBackgroundIcon.className != "hide")
                 ? "middle-container" : "middle-without-left";
     }
@@ -189,15 +191,15 @@ import { getOrSaveDetails } from "./fetchapi.js";
     function addTask() {
 
         if (event.key == 'Enter' && taskInput.value != "") {
-            let important = (selectedCategoryId == 2) ? true : false;
-            let categoryIds = [];
+            var important = (selectedCategoryId == 2) ? true : false;
+            var categoryIds = [];
 
             if (selectedCategoryId < 5) {
                 categoryIds.push(selectedCategoryId, 5);
             } else {
                 categoryIds.push(selectedCategoryId);
             }
-            let newTask = {
+            var newTask = {
                 categoryIds: categoryIds,
                 id: 0,
                 name: taskInput.value,
@@ -218,8 +220,8 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * @param task A task object need to be saved.
      */
     function saveTask(task) {
-        let categories = []
-        getOrSaveDetails("/task", "POST", task).then(() => {
+        var categories = []
+        saveOrUpdateTask(task).then(() => {
             temporaryCategory.forEach(category => {
                 if (category.id == selectedCategoryId) {
                     category.count += 1;
@@ -229,7 +231,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
                         temporaryCategory[4].count++;
                         categories.push(temporaryCategory[4]);
                     }
-                    getOrSaveDetails("/categorys", "POST", categories).then(() => {
+                    saveOrupdateCategories(categories).then(() => {
                         buildCategory();
                     });
                 }
@@ -242,40 +244,59 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * and render task based on ther completion.
      */
     function buildTask() {
-        let completedTaskCount = 0;
-        let result = getOrSaveDetails("/tasks", "GET");
+        var completedTaskCount = 0;
 
         taskBackground.innerHTML = "";
-
-        result.then((tasks) => {
-            for (let task of tasks) {
-                task.categoryIds.forEach((value) => {
-
-                    if (value == selectedCategoryId) {
-                        if (task.isCompleted) {
-                            if (selectedCategoryId != 2) {
-                                if (completedTaskCount == 0) {
-                                    createCompleteButton();
-                                }
-                                completedTaskCount++;
-                                if (isCompletedTasksHidden) {
-                                    renderTask(task, 'beforeend');
-                                }
-                            }
-                        } else {
-                            renderTask(task, 'afterbegin');
-                        }
-                    }
+        getAllTasks().then((tasks) => {
+            for (var task of tasks) {
+                task.categoryIds.forEach((categoryId) => {
+                    completedTaskCount = renderTaskByCategoryId(categoryId, completedTaskCount, task);
                 });
             }
-            let completedArrow = document.getElementById("completed-arrow");
-
-            if (completedArrow != null) {
-                completedArrow.className = (isCompletedTasksHidden == false) ? "hide-complete" : "show-complete";
-                document.getElementById('completed-count').innerHTML = completedTaskCount;
-            }
+            updateCompletedButton(completedTaskCount);
         });
 
+    }
+
+    function updateCompletedButton(completedTaskCount) {
+        var completedArrow = document.getElementById("completed-arrow");
+
+        if (completedArrow != null) {
+            completedArrow.className = (isCompletedTasksHidden == false) ? "hide-complete" : "show-complete";
+            document.getElementById('completed-count').innerHTML = completedTaskCount;
+        }
+    }
+
+    function renderTaskByCategoryId(categoryId, completedTaskCount, task) {
+
+        if (categoryId == selectedCategoryId) {
+            if (task.isCompleted) {
+                completedTaskCount = renderCompletedTask(completedTaskCount, task);
+            } else {
+                renderTask(task, 'afterbegin');
+            }
+        }
+        return completedTaskCount;
+    }
+
+    function renderCompletedTask(completedTaskCount, task) {
+
+        if (selectedCategoryId != 2) {
+
+            if (completedTaskCount == 0) {
+                createCompleteButton();
+            }
+            completedTaskCount++;
+            createCompletedTask(task);
+        }
+        return completedTaskCount;
+    }
+
+    function createCompletedTask(task) {
+
+        if (isCompletedTasksHidden) {
+            renderTask(task, 'beforeend');
+        }
     }
 
     /**
@@ -327,7 +348,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
         taskNameDiv.innerText = task.name;
         taskAndMetaDiv.addEventListener('click', selectTask);
         starDiv.addEventListener('click', setTaskImportantStatus);
-        checkDiv.addEventListener('click', setTaskCompletedStatus);
+        checkDiv.addEventListener('click', setTaskCompleteStatus);
 
         taskAndMetaDiv.appendChild(taskNameDiv);
         taskDiv.appendChild(checkDiv);
@@ -361,20 +382,20 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * The function gets the task from the server, toggles the isCompleted
      * property, and then sends the task back to the server when a task is clicked.
      */
-    function setTaskCompletedStatus() {
-        let id = this.id;
-        let categories = [];
+    function setTaskCompleteStatus() {
+        var id = this.id;
+        var categories = [];
 
-        getOrSaveDetails("/tasks/".concat(id.split('-')[1]), "GET").then((task) => {
+        getTaskById(id.split('-')[1]).then((task) => {
         
             if (task.isCompleted == true) {
-                categories.push(...setTaskIncomplete(task));
+                categories.push(...updateCategoryCount(task, true));
             } else {
-                categories.push(...setTaskCompleted(task));
+                categories.push(...updateCategoryCount(task, false));
             }
             changeRightContainer(task, id);
-            getOrSaveDetails("/categorys", "POST", categories).then(() => {
-                getOrSaveDetails("/task", "POST", task).then(() => buildCategory());
+            saveOrupdateCategories(categories).then(() => {
+                saveOrUpdateTask(task).then(() => buildCategory());
             })
         });
     }
@@ -386,47 +407,25 @@ import { getOrSaveDetails } from "./fetchapi.js";
         }
     }
 
-    function setTaskIncomplete(task) {
-        let categories = [];
-        
+    function updateCategoryCount(task, status) {
+        var categories = [];
+        var countNumber;
+
+        if (status === true) {
+            task.isCompleted = false;
+            countNumber = 1
+        } else {
+            task.isCompleted = true;
+            countNumber = -1;
+        }
         task.categoryIds.forEach(categoryId => {
             temporaryCategory.forEach(category => {
                 if (categoryId == category.id) {
-                    if (categoryId == 2) {
-                        if (task.isCompleted == true) {
-                            category.count++;
-                            categories.push(category);
-                        }
-                    } else {
-                        category.count++;
-                        categories.push(category);
-                    }
+                    category.count+=countNumber;
+                    categories.push(category);
                 }
             });
         })
-        task.isCompleted = false;
-        return categories;
-    }
-
-    function setTaskCompleted(task) {
-        let categories = [];
-
-        task.categoryIds.forEach(categoryId => {
-            temporaryCategory.forEach(category => {
-                if (categoryId == category.id) {
-                    if (categoryId == 2) {
-                        if (task.isCompleted == false) {
-                            category.count--;
-                            categories.push(category);
-                        }
-                    } else {
-                        category.count--;
-                        categories.push(category);
-                    }
-                }
-            });
-        })
-        task.isCompleted = true;
         return categories;
     }
 
@@ -437,12 +436,12 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * the task in server when important icon clicked.
      */
     function setTaskImportantStatus() {
-        let id = this.id;
+        var id = this.id;
 
-        getOrSaveDetails(`/tasks/${id.split('-')[1]}`, "GET").then((task) => {
+        getTaskById(id.split('-')[1]).then((task) => {
 
             if (task.isImportant == true) {
-                let categoryIndex = task.categoryIds.indexOf(2);
+                var categoryIndex = task.categoryIds.indexOf(2);
                 task.categoryIds.splice(categoryIndex, categoryIndex + 1);
                 task.isImportant = false;
                 if (task.isCompleted == false) {
@@ -455,9 +454,9 @@ import { getOrSaveDetails } from "./fetchapi.js";
                     temporaryCategory[1].count++;
                 }
             }
-            getOrSaveDetails("/category", "POST", temporaryCategory[1]).then(() => {
+            saveOrupdateCategory(temporaryCategory[1]).then(() => {
                 changeRightContainer(task, id);
-                getOrSaveDetails("/task", "POST", task).then(() => buildCategory());
+                saveOrUpdateTask(task).then(() => buildCategory());
             });
         });
     }
@@ -467,17 +466,17 @@ import { getOrSaveDetails } from "./fetchapi.js";
      * to get the task details, and then display's the task details in the right container.
      */
     function selectTask() {
-        let id = this.id;
+        var id = this.id;
 
-        getOrSaveDetails("/tasks/".concat(id), "GET").then((task) => {
+        getTaskById(id).then((task) => {
 
             rightContainer.className = "display-right-container";
             middleContainer.className = (mainBackgroundIcon.className == "hide")
                     ? "middle-and-right" : "middle-with-left-and-right";
-            let currentTask = document.getElementById('task-'.concat(task.id));
+            var currentTask = document.getElementById('task-'.concat(task.id));
 
             if (selectedTask != undefined) {
-                let oldTask = document.getElementById('task-'.concat(selectedTask.id));
+                var oldTask = document.getElementById('task-'.concat(selectedTask.id));
                 oldTask.className = "task-hover"
             }
             currentTask.className = "task-selected"
@@ -501,7 +500,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
 
         rightTask.innerHTML = "";
         rightTaskImportant.addEventListener('click', setTaskImportantStatus);
-        rightTaskCompleted.addEventListener('click', setTaskCompletedStatus);
+        rightTaskCompleted.addEventListener('click', setTaskCompleteStatus);
         rightTaskName.innerHTML = task.name;
         rightTask.appendChild(rightTaskCompleted);
         rightTask.appendChild(rightTaskName);
@@ -517,7 +516,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
     function hideSideBar() {
         leftContainer.classList.add("hide");
 
-        middleContainer.className = (rightContainer.className === "hide")
+        middleContainer.className = (rightContainer.className == 'right-container')
             ? "middle-without-left" : "middle-and-right";
 
         mainBackgroundIcon.classList.remove("icon");
@@ -532,7 +531,7 @@ import { getOrSaveDetails } from "./fetchapi.js";
     function displaySideBar() {
         leftContainer.classList.remove("hide");
 
-        middleContainer.className = (rightContainer.className === "hide")
+        middleContainer.className = (rightContainer.className === "right-container")
             ? "middle-container" : "middle-with-left-and-right";
 
         mainBackgroundIcon.className = "icon";
@@ -546,9 +545,9 @@ import { getOrSaveDetails } from "./fetchapi.js";
     function addCategory() {
 
         if (event.key == 'Enter' && categoryInput.value != "") {
-            let newCategory = { id: 0, iconClass: 'fa fa-tasks', name: categoryInput.value, count: 0 };
+            var newCategory = { id: 0, iconClass: 'fa fa-tasks', name: categoryInput.value, count: 0 };
 
-            getOrSaveDetails("/category", "POST", newCategory).then((value) => {
+            saveOrupdateCategory(newCategory).then((value) => {
                 categoryInput.value = "";
                 selectedCategoryId = value;
                 buildCategory();

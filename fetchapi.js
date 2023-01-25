@@ -1,15 +1,19 @@
-const defaultUrl = "http://localhost:8080/todo";
+export function getDetails(url) {
 
-export async function getOrSaveDetails(url, type, data) {
+    return fetch(url).then((response) => {
+        return response.json();
+    });
+}
 
-    if (type == "GET") {
-        const response = await fetch(defaultUrl.concat(url));
-        return await response.json();
-    }
+export function saveOrUpdateDetails(url, object) {
+    var request = {headers: {'Content-type': 'application/json'},method: "POST", body: JSON.stringify(object)};
 
-    if (type == "POST") {
-        var request = {headers: {'Content-type': 'application/json'},method: type, body: JSON.stringify(data)};
-        const response = await fetch(defaultUrl.concat(url), request);
-        return await response.json();
-    }
+    return fetch(url, request).then((response) => {
+        var result;
+
+        if (response.body != null) {
+            result = response.json();
+        }
+        return result;
+    });
 }
